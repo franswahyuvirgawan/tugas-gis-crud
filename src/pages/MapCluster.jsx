@@ -173,7 +173,7 @@ function MapCluster() {
 
   return (
     <div className="flex justify-center items-center py-[40px] flex-col font-martian text-white gap-[50px]">
-      <h1 className="text-4xl font-bold">Geographic Information System</h1>
+      <h1 className="text-4xl font-bold">Cluster Marker</h1>
       <MapContainer
         className="Map"
         center={{ lat: -8.60355596857304, lng: 115.25943918278261 }}
