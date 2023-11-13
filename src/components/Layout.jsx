@@ -38,6 +38,11 @@ const Layout = ({ children, onNavigate }) => {
             <li>
               <button onClick={() => onNavigate("polyline")}>Polyline</button>
             </li>
+            <li>
+              <button onClick={() => onNavigate("map-routing")}>
+                Map Routing
+              </button>
+            </li>
           </ul>
         </div>
       </div>

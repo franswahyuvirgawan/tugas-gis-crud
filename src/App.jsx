@@ -1,8 +1,9 @@
 // App.js
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "./components/Layout";
 import MapCluster from "./pages/MapCluster";
 import Polyline from "./pages/Polyline";
+import MapRouting from "./pages/MapRouting";
 
 const App = () => {
   // Retrieve the currentPage value from localStorage or use the default value "cluster-marker"
@@ -26,6 +27,7 @@ const App = () => {
       <Layout onNavigate={handleNavigate}>
         {currentPage === "cluster-marker" && <MapCluster />}
         {currentPage === "polyline" && <Polyline />}
+        {currentPage === "map-routing" && <MapRouting />}
       </Layout>
     </div>
   );

@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
-import osm from "./osm-providers";
 import polyline from "polyline-encoded";
 import L from "leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -191,8 +190,8 @@ const Polyline = () => {
             />
           </FeatureGroup>
           <TileLayer
-            url={osm.maptiler.url}
-            attribution={osm.maptiler.attribution}
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
         </MapContainer>
       </div>
