@@ -1,6 +1,30 @@
 import React from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import useUserStore from "../store/userStore";
 
-const Layout = ({ children, onNavigate }) => {
+const Layout = () => {
+  const store = useUserStore();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("https://gisapis.manpits.xyz/api/logout", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${store.userToken}`,
+        },
+      });
+      if (res.ok) {
+        store.updateUserToken("");
+        navigate("/");
+      } else {
+        console.log("Oops! Something is wrong.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="navbar bg-base-200 sticky top-0 z-40 py-4 md:px-[80px] px-[32px] w-full justify-between items-center">
@@ -31,23 +55,16 @@ const Layout = ({ children, onNavigate }) => {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-max flex flex-col items-end gap-1"
           >
             <li>
-              <button onClick={() => onNavigate("cluster-marker")}>
-                Cluster Marker
-              </button>
+              <Link to="/dashboard">Dashboard</Link>
             </li>
             <li>
-              <button onClick={() => onNavigate("polyline")}>Polyline</button>
-            </li>
-            <li>
-              <button onClick={() => onNavigate("map-routing")}>
-                Map Routing
-              </button>
+              <button onClick={handleLogout}>Logout</button>
             </li>
           </ul>
         </div>
       </div>
       <div className="md:px-[80px] px-[32px] text-xs flex justify-center flex-col items-center gap-[100px] py-[40px] relative z-0">
-        {children}
+        <Outlet />
       </div>
       <footer className="footer footer-center p-4 bg-primary text-base-content text-xs lg:text-sm md:px-[80px] px-[32px]">
         <aside>

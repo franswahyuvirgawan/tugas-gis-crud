@@ -9,4 +9,8 @@
     font-family: "Inter", sans-serif;
     color: red;
   }
+
+  .transparent-input .react-select__input {
+    background: transparent;
+  }
 }

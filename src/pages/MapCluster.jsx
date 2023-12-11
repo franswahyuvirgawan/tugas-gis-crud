@@ -24,21 +24,12 @@ function MyComponent({ saveLocation }) {
     click: async (e) => {
       const { lat, lng } = e.latlng;
 
-      try {
-        const response = await axios.get(
-          `https://geocode.maps.co/reverse?lat=${lat}&lon=${lng}`
-        );
-        const locationName = response.data.address.village;
-        const locationData = {
-          lat,
-          lng,
-          locationName,
-        };
-        // Menyimpan informasi lengkap lokasi
-        saveLocation(locationData);
-      } catch (error) {
-        console.error("Error fetching location data", error);
-      }
+      const locationData = {
+        lat,
+        lng,
+      };
+
+      saveLocation(locationData);
     },
   });
   return null;
@@ -52,7 +43,7 @@ function MapCluster() {
   useEffect(() => {
     // Mengambil data dari server saat komponen pertama kali dimuat
     axios
-      .get("http://g_2005551020.gis.localnet/api/index.php")
+      .get("http://localhost:8888/api/index.php")
       .then((response) => {
         // Mengisi data ke dalam state gisData
         setGisData(response.data);
@@ -67,7 +58,7 @@ function MapCluster() {
     try {
       // Mengirim data ke server menggunakan POST request
       const postResponse = await axios.post(
-        "http://g_2005551020.gis.localnet/api/index.php",
+        "http://localhost:8888/api/index.php",
         newLocationData
       );
       newLocationData.id = postResponse.data.id; // Anggap server memberikan ID dalam respons
@@ -79,40 +70,25 @@ function MapCluster() {
 
   const updateMarkerPosition = async (locationId, newPosition) => {
     try {
-      const response = await axios.get(
-        `https://geocode.maps.co/reverse?lat=${newPosition.lat}&lon=${newPosition.lng}`
-      );
+      // Persiapan data yang akan dikirim ke server
+      const updatedData = {
+        id: locationId,
+        lat: newPosition.lat,
+        lng: newPosition.lng,
+      };
 
-      console.log(response);
-
-      if (response.data.address.village) {
-        const newLocationName = response.data.address.village;
-
-        // Persiapan data yang akan dikirim ke server
-        const updatedData = {
-          id: locationId,
-          lat: newPosition.lat,
-          lng: newPosition.lng,
-          locationName: newLocationName,
-        };
-
-        await axios.put(
-          `http://g_2005551020.gis.localnet/api/index.php`,
-          updatedData
-        );
-        const updatedLocationData = gisData.map((location) => {
-          if (location.id === locationId) {
-            return {
-              ...location,
-              lat: newPosition.lat,
-              lng: newPosition.lng,
-              locationName: newLocationName,
-            };
-          }
-          return location;
-        });
-        setGisData(updatedLocationData);
-      }
+      await axios.put(`http://localhost:8888/api/index.php`, updatedData);
+      const updatedLocationData = gisData.map((location) => {
+        if (location.id === locationId) {
+          return {
+            ...location,
+            lat: newPosition.lat,
+            lng: newPosition.lng,
+          };
+        }
+        return location;
+      });
+      setGisData(updatedLocationData);
     } catch (error) {
       console.error("Error fetching location data or updating location", error);
     }
@@ -120,7 +96,7 @@ function MapCluster() {
 
   useEffect(() => {
     axios
-      .get("http://g_2005551020.gis.localnet/api/index.php")
+      .get("http://localhost:8888/api/index.php")
       .then((response) => {
         // Mengubah string menjadi angka
         const gisDataWithNumbers = response.data.map((item) => ({
@@ -144,7 +120,7 @@ function MapCluster() {
 
       // Kirim permintaan DELETE ke server dengan data dalam body
       const deleteResponse = await axios.delete(
-        `http://g_2005551020.gis.localnet/api/index.php`,
+        `http://localhost:8888/api/index.php`,
         {
           data: requestData, // Menyertakan data dalam body request
           headers: {
@@ -232,7 +208,6 @@ function MapCluster() {
           <thead>
             <tr>
               <th className="p-[16px]"></th>
-              <td className="p-[16px]">Location Name</td>
               <td className="p-[16px]">Latitude</td>
               <td className="p-[16px]">Longitude</td>
               <th className="p-[16px]"></th>
@@ -252,7 +227,6 @@ function MapCluster() {
                 {gisData?.map((location, key) => (
                   <tr key={key}>
                     <th className="p-[16px]">{key + 1}</th>
-                    <td className="p-[16px]">{location.locationName}</td>
                     <td className="p-[16px]">{location.lat}</td>
                     <td className="p-[16px]">{location.lng}</td>
                     <th className="p-[16px]">
