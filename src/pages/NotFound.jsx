@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const NotFound: React.FC = () => {
+const NotFound = () => {
   return (
     <div className="h-screen w-full flex flex-row justify-center items-center text-white">
       <div className="flex flex-row gap-[20px] items-center">
