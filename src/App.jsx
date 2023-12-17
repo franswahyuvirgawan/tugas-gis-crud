@@ -6,7 +6,7 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
-import NotFound from "./Pages/NotFound";
+import NotFound from "./pages/NotFound";
 import Dashboard from "./components/Dashboard";
 import Daftar from "./pages/Daftar";
 import Edit from "./pages/Edit";
