@@ -173,9 +173,12 @@ const Edit = () => {
     const convertedData = data.map((coordinatesArray) =>
       coordinatesArray.map(({ lat, lng }) => [lat, lng])
     );
-    let encode = L.polyline(convertedData[0]);
-    setEditedData(encode.encodePath());
+
+    const encodedPath = polyline.encode(convertedData[0]);
+    setEditedData(encodedPath);
   };
+
+  console.log(editedData);
 
   const calculateDistance = (coord1, coord2) => {
     const start = { latitude: coord1[0], longitude: coord1[1] };
