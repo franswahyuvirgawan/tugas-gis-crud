@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useUserStore from "../store/userStore";
+import { PuffLoader } from "react-spinners";
 
 function KondisiJalan() {
   const store = useUserStore();
+  const [loading, setLoading] = useState(true);
   const [dataAllKondisiJalan, setDataAllKondisiJalan] = useState(null);
 
   const fetchDataKondisiJalan = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "https://gisapis.manpits.xyz/api/mkondisi",
@@ -17,6 +20,7 @@ function KondisiJalan() {
         }
       );
       setDataAllKondisiJalan(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -39,18 +43,29 @@ function KondisiJalan() {
               {/* head */}
               <thead>
                 <tr>
-                  <th>Id</th>
-                  <th>Kondisi Jalan</th>
+                  <th className="text-center">Id</th>
+                  <th className="text-center">Kondisi Jalan</th>
                 </tr>
               </thead>
               <tbody>
-                {/* row 1 */}
-                {dataAllKondisiJalan?.eksisting.map((item) => (
+                {loading ? (
                   <tr>
-                    <th>{item.id}</th>
-                    <td>{item.kondisi}</td>
+                    <td colSpan={2}>
+                      <div className="w-full flex flex-row justify-center py-20">
+                        <PuffLoader color="#fff" />
+                      </div>
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  <>
+                    {dataAllKondisiJalan?.eksisting.map((item) => (
+                      <tr>
+                        <th className="text-center">{item.id}</th>
+                        <td className="text-center">{item.kondisi}</td>
+                      </tr>
+                    ))}
+                  </>
+                )}
               </tbody>
             </table>
           </div>

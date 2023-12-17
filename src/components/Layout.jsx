@@ -55,7 +55,7 @@ const Layout = () => {
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-max flex flex-col items-end gap-1"
           >
             <li>
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/">Dashboard</Link>
             </li>
             <li>
               <button onClick={handleLogout}>Logout</button>

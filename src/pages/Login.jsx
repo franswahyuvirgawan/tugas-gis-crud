@@ -8,6 +8,7 @@ import axios from "axios";
 const Login = () => {
   const store = useUserStore();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e) => {
@@ -17,6 +18,23 @@ const Login = () => {
       email: store.newEmail,
       password: store.newPassword,
     };
+
+    setErrors({});
+
+    const inputErrors = {};
+    if (!store.newEmail) {
+      inputErrors.newEmail = "Silahkan isi email";
+    }
+    if (!store.newPassword) {
+      inputErrors.newPassword = "Silahkan isi password";
+    }
+
+    if (Object.keys(inputErrors).length > 0) {
+      setErrors(inputErrors);
+      setLoading(false);
+      toast.error("Harap perhatikan form");
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -35,7 +53,7 @@ const Login = () => {
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      toast.error(error.response.data.msg);
+      toast.error(error.response.data.meta.message);
     }
   };
 
@@ -58,20 +76,30 @@ const Login = () => {
         className="flex flex-col gap-[16px] h-screen justify-center items-center w-full md:w-[400px] px-[70px]"
       >
         <h1 className="lg:text-4xl text-2xl font-bold">Login Akun</h1>
-        <input
-          value={store.newEmail}
-          onChange={(e) => store.updateNewEmail(e.target.value)}
-          type="text"
-          placeholder="Masukkan Nama"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
-        <input
-          type="password"
-          value={store.newPassword}
-          onChange={(e) => store.updatenewPassword(e.target.value)}
-          placeholder="Masukkan Password"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
+        <div className="flex flex-col gap-2 w-full">
+          <input
+            value={store.newEmail}
+            onChange={(e) => store.updateNewEmail(e.target.value)}
+            type="text"
+            placeholder="Masukkan Email"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.newEmail && (
+            <p className="px-2 text-red-500 text-xs">{errors?.newEmail}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 w-full">
+          <input
+            type="password"
+            value={store.newPassword}
+            onChange={(e) => store.updatenewPassword(e.target.value)}
+            placeholder="Masukkan Password"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.newPassword && (
+            <p className="px-2 text-red-500 text-xs">{errors?.newPassword}</p>
+          )}
+        </div>
         <button className="w-full btn btn-xs p-5 btn-primary flex flex-col items-center">
           Login
         </button>

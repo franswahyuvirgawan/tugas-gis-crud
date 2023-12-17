@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useUserStore from "../store/userStore";
+import { PuffLoader } from "react-spinners";
 
 function Region() {
   const store = useUserStore();
   const [dataAllRegion, setDataAllRegion] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchDataPerUser = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "https://gisapis.manpits.xyz/api/mregion",
@@ -17,6 +20,7 @@ function Region() {
         }
       );
       setDataAllRegion(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -25,6 +29,8 @@ function Region() {
   useEffect(() => {
     fetchDataPerUser();
   }, []);
+
+  console.log(loading);
 
   return (
     <>
@@ -40,18 +46,29 @@ function Region() {
                 {/* head */}
                 <thead>
                   <tr>
-                    <th>Id</th>
-                    <th>provinsi</th>
+                    <th className="text-center">Id</th>
+                    <th className="text-center">provinsi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* row 1 */}
-                  {dataAllRegion?.provinsi.map((item) => (
+                  {loading ? (
                     <tr>
-                      <th>{item.id}</th>
-                      <td>{item.provinsi}</td>
+                      <td colSpan={2}>
+                        <div className="w-full flex flex-row justify-center py-5">
+                          <PuffLoader color="#fff" />
+                        </div>
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    <>
+                      {dataAllRegion?.provinsi.map((item, key) => (
+                        <tr key={key}>
+                          <th className="text-center">{item.id}</th>
+                          <td className="text-center">{item.provinsi}</td>
+                        </tr>
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -67,20 +84,31 @@ function Region() {
                 {/* head */}
                 <thead>
                   <tr>
-                    <th>Id</th>
-                    <th>prov_id</th>
-                    <th>kabupaten</th>
+                    <th className="text-center">Id</th>
+                    <th className="text-center">prov_id</th>
+                    <th className="text-center">kabupaten</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* row 1 */}
-                  {dataAllRegion?.kabupaten.map((item) => (
+                  {loading ? (
                     <tr>
-                      <th>{item.id}</th>
-                      <th>{item.prov_id}</th>
-                      <td>{item.kabupaten}</td>
+                      <td colSpan={3}>
+                        <div className="w-full flex flex-row justify-center py-20">
+                          <PuffLoader color="#fff" />
+                        </div>
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    <>
+                      {dataAllRegion?.kabupaten.map((item, key) => (
+                        <tr key={key}>
+                          <th className="text-center">{item.id}</th>
+                          <th className="text-center">{item.prov_id}</th>
+                          <td className="text-center">{item.kabupaten}</td>
+                        </tr>
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -96,20 +124,31 @@ function Region() {
                 {/* head */}
                 <thead>
                   <tr>
-                    <th>Id</th>
-                    <th>kab_id</th>
-                    <th>kecamatan</th>
+                    <th className="text-center">Id</th>
+                    <th className="text-center">kab_id</th>
+                    <th className="text-center">kecamatan</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* row 1 */}
-                  {dataAllRegion?.kecamatan.map((item) => (
+                  {loading ? (
                     <tr>
-                      <th>{item.id}</th>
-                      <th>{item.kab_id}</th>
-                      <td>{item.kecamatan}</td>
+                      <td colSpan={3}>
+                        <div className="w-full flex flex-row justify-center py-20">
+                          <PuffLoader color="#fff" />
+                        </div>
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    <>
+                      {dataAllRegion?.kecamatan.map((item, key) => (
+                        <tr key={key}>
+                          <th className="text-center">{item.id}</th>
+                          <th className="text-center">{item.kab_id}</th>
+                          <td className="text-center">{item.kecamatan}</td>
+                        </tr>
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -125,20 +164,31 @@ function Region() {
                 {/* head */}
                 <thead>
                   <tr>
-                    <th>Id</th>
-                    <th>kec_id</th>
-                    <th>desa</th>
+                    <th className="text-center">Id</th>
+                    <th className="text-center">kec_id</th>
+                    <th className="text-center">desa</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {/* row 1 */}
-                  {dataAllRegion?.desa.map((item) => (
+                  {loading ? (
                     <tr>
-                      <th>{item.id}</th>
-                      <th>{item.kec_id}</th>
-                      <td>{item.desa}</td>
+                      <td colSpan={3}>
+                        <div className="w-full flex flex-row justify-center py-20">
+                          <PuffLoader color="#fff" />
+                        </div>
+                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    <>
+                      {dataAllRegion?.desa.map((item, key) => (
+                        <tr key={key}>
+                          <th className="text-center">{item.id}</th>
+                          <th className="text-center">{item.kec_id}</th>
+                          <td className="text-center">{item.desa}</td>
+                        </tr>
+                      ))}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>

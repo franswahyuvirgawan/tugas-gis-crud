@@ -74,22 +74,22 @@ const Dashboard = () => {
               <summary>Master Data</summary>
               <ul className="p-2 flex flex-col gap-2">
                 <li>
-                  <Link to="/dashboard/mregion">Region</Link>
+                  <Link to="/mregion">Region</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/meksisting">Perkerasan Jalan</Link>
+                  <Link to="/meksisting">Perkerasan Jalan</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/mjenisjalan">Jenis Jalan</Link>
+                  <Link to="/mjenisjalan">Jenis Jalan</Link>
                 </li>
                 <li>
-                  <Link to="/dashboard/mkondisi">Kondisi Jalan</Link>
+                  <Link to="/mkondisi">Kondisi Jalan</Link>
                 </li>
               </ul>
             </details>
           </li>
           <li className="w-full">
-            <Link to="/dashboard/ruas-jalan">Ruas Jalan</Link>
+            <Link to="/ruas-jalan">Ruas Jalan</Link>
           </li>
           <button
             className="btn btn-primary w-full bottom-0"

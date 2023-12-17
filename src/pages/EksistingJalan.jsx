@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useUserStore from "../store/userStore";
+import { PuffLoader } from "react-spinners";
 
 function EksistingJalan() {
   const store = useUserStore();
+  const [loading, setLoading] = useState(true);
   const [dataAllEksistingJalan, setDataAllEksistingJalan] = useState(null);
 
   const fetchDataEksistingJalan = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "https://gisapis.manpits.xyz/api/meksisting",
@@ -17,6 +20,7 @@ function EksistingJalan() {
         }
       );
       setDataAllEksistingJalan(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -39,18 +43,30 @@ function EksistingJalan() {
               {/* head */}
               <thead>
                 <tr>
-                  <th>Id</th>
-                  <th>Eksisting</th>
+                  <th className="text-center">Id</th>
+                  <th className="text-center">Eksisting</th>
                 </tr>
               </thead>
               <tbody>
-                {/* row 1 */}
-                {dataAllEksistingJalan?.eksisting.map((item) => (
+                {loading ? (
                   <tr>
-                    <th>{item.id}</th>
-                    <td>{item.eksisting}</td>
+                    <td colSpan={2}>
+                      <div className="w-full flex flex-row justify-center py-20">
+                        <PuffLoader color="#fff" />
+                      </div>
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  <>
+                    {dataAllEksistingJalan?.eksisting.map((item) => (
+                      <tr>
+                        <th className="text-center">{item.id}</th>
+                        <td className="text-center">{item.eksisting}</td>
+                      </tr>
+                    ))}
+                  </>
+                )}
+                {/* row 1 */}
               </tbody>
             </table>
           </div>

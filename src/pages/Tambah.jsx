@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 import { FeatureGroup, MapContainer, TileLayer } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import haversine from "haversine";
+import toast, { Toaster } from "react-hot-toast";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -34,6 +35,7 @@ const Tambah = () => {
   const [valueRuasJalan, setValueRuasJalan] = useState("");
   const [valueLebar, setValueLebar] = useState("");
   const [valueKeterangan, setValueKeterangan] = useState("");
+  const [errors, setErrors] = useState([]);
 
   // Select
   const [valueDesa, setValueDesa] = useState("");
@@ -173,8 +175,6 @@ const Tambah = () => {
     setValueCreated(encode.encodePath());
   };
 
-  console.log(valueCreated);
-
   const calculateDistance = (coord1, coord2) => {
     const start = { latitude: coord1[0], longitude: coord1[1] };
     const end = { latitude: coord2[0], longitude: coord2[1] };
@@ -201,10 +201,8 @@ const Tambah = () => {
     }
   }, [valueCreated, decodePolylines]);
 
-  console.log(jarak);
   const navigate = useNavigate();
   const handleAdd = async (e) => {
-    console.log("halo");
     e.preventDefault();
     const data = {
       paths: valueCreated,
@@ -218,18 +216,90 @@ const Tambah = () => {
       jenisjalan_id: valueJenisJalan,
       keterangan: valueKeterangan,
     };
-    console.log(data);
+    setErrors({});
+    const inputErrors = {};
+    if (!valueDesa) {
+      inputErrors.valueDesa = "Silahkan isi desa";
+    }
+    if (!valueKodeRuas) {
+      inputErrors.valueKodeRuas = "Silahkan isi kode ruas";
+    }
+    if (!valueRuasJalan) {
+      inputErrors.valueRuasJalan = "Silahkan isi nama ruas";
+    }
+    if (!jarak) {
+      inputErrors.jarak = "Silahkan isi ruas lokasi";
+    }
+    if (!valueLebar) {
+      inputErrors.valueLebar = "Silahkan isi lebar";
+    } else if (isNaN(valueLebar)) {
+      inputErrors.valueLebar = "Silahkan isi dengan angka";
+    }
+    if (!valueEksistingJalan) {
+      inputErrors.valueEksistingJalan = "Silahkan isi eksisting jalan";
+    }
+    if (!valueKondisiJalan) {
+      inputErrors.valueKondisiJalan = "Silahkan isi kondisi jalan";
+    }
+    if (!valueJenisJalan) {
+      inputErrors.valueJenisJalan = "Silahkan isi jenis jalan";
+    }
+    if (!valueKeterangan) {
+      inputErrors.valueKeterangan = "Silahkan isi keterangan";
+    }
+    if (Object.keys(inputErrors).length > 0) {
+      toast.error("Harap perhatikan form");
+      setErrors(inputErrors);
+      return;
+    }
     try {
       await axios.post("https://gisapis.manpits.xyz/api/ruasjalan", data, {
         headers: {
           Authorization: `Bearer ${store.userToken}`,
         },
       });
-      navigate("/dashboard/ruas-jalan");
+      navigate("/ruas-jalan");
     } catch (error) {
       console.log(error);
     }
   };
+
+  const customStyles = {
+    control: (base) => ({
+      ...base,
+      background: "#1d232a",
+      border: "1px solid rgba(255, 255, 255, var(--tw-border-opacity, 0.2))",
+      color: "white",
+    }),
+    menu: (base) => ({
+      ...base,
+      background: "#1d232a",
+      color: "white",
+    }),
+    menuList: (base) => ({
+      ...base,
+      background: "#1d232a",
+      color: "white",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: "white",
+      backgroundColor: state.isHovered ? "#007bff" : null,
+      "&:hover": {
+        backgroundColor: "#007bff",
+      },
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "white",
+    }),
+    input: (base) => ({
+      ...base,
+      color: "white",
+    }),
+  };
+
+  console.log(errors);
 
   return (
     <div
@@ -237,6 +307,7 @@ const Tambah = () => {
         "text-xs flex justify-center flex-col items-center gap-[100px]"
       }
     >
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex justify-center items-center flex-col font-martian text-white gap-[50px]">
         <MapContainer
           className="Map"
@@ -271,80 +342,126 @@ const Tambah = () => {
         <div className="w-full flex flex-col gap-2">
           <label htmlFor="">Desa</label>
           <Select
+            styles={customStyles}
             options={dataAllDesa}
-            className="transparent-input"
             onChange={(e) => setValueDesa(e.value)}
           />
+          {errors?.valueDesa && (
+            <p className="px-2 text-red-500 text-xs">{errors?.valueDesa}</p>
+          )}
         </div>
-        <input
-          value={valueKodeRuas}
-          onChange={(e) => setValueKodeRuas(e.target.value)}
-          type="text"
-          placeholder="Kode Ruas"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
-        <input
-          value={valueRuasJalan}
-          onChange={(e) => setValueRuasJalan(e.target.value)}
-          type="text"
-          placeholder="Nama Ruas"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
-        <input
-          value={jarak}
-          disabled
-          type="text"
-          placeholder="Panjang"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
-        <input
-          value={valueLebar}
-          onChange={(e) => setValueLebar(e.target.value)}
-          type="text"
-          placeholder="Lebar"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
+        <div className="flex flex-col gap-2 w-full">
+          <input
+            value={valueKodeRuas}
+            onChange={(e) => setValueKodeRuas(e.target.value)}
+            type="text"
+            placeholder="Kode Ruas"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.valueKodeRuas && (
+            <p className="px-2 text-red-500 text-xs">{errors?.valueKodeRuas}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 w-full">
+          <input
+            value={valueRuasJalan}
+            onChange={(e) => setValueRuasJalan(e.target.value)}
+            type="text"
+            placeholder="Nama Ruas"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.valueRuasJalan && (
+            <p className="px-2 text-red-500 text-xs">
+              {errors?.valueRuasJalan}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 w-full">
+          <input
+            value={jarak + " meter"}
+            disabled
+            type="text"
+            placeholder="Panjang"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.jarak && (
+            <p className="px-2 text-red-500 text-xs">{errors?.jarak}</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 w-full">
+          <input
+            value={valueLebar}
+            onChange={(e) => setValueLebar(e.target.value)}
+            type="text"
+            placeholder="Lebar"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.valueLebar && (
+            <p className="px-2 text-red-500 text-xs">{errors?.valueLebar}</p>
+          )}
+        </div>
         <div className="w-full flex flex-col gap-2">
           <label htmlFor="">Eksisting Jalan</label>
           <Select
+            styles={customStyles}
             options={dataAllEksistingJalan}
-            className="transparent-input"
             onChange={(e) => {
               setValueEksistingJalan(e.value);
             }}
           />
+          {errors?.valueEksistingJalan && (
+            <p className="px-2 text-red-500 text-xs">
+              {errors?.valueEksistingJalan}
+            </p>
+          )}
         </div>
         <div className="w-full flex flex-col gap-2">
           <label htmlFor="">Kondisi Jalan</label>
           <Select
+            styles={customStyles}
             options={dataAllKondisiJalan}
             onChange={(e) => {
               setValueKondisiJalan(e.value);
             }}
-            className="transparent-input"
           />
+          {errors?.valueKondisiJalan && (
+            <p className="px-2 text-red-500 text-xs">
+              {errors?.valueKondisiJalan}
+            </p>
+          )}
         </div>
         <div className="w-full flex flex-col gap-2">
           <label htmlFor="">Jenis Jalan</label>
           <Select
+            styles={customStyles}
             options={dataAllJenisJalan}
             onChange={(e) => {
               setValueJenisJalan(e.value);
             }}
-            className="transparent-input"
           />
+          {errors?.valueJenisJalan && (
+            <p className="px-2 text-red-500 text-xs">
+              {errors?.valueJenisJalan}
+            </p>
+          )}
         </div>
-        <input
-          value={valueKeterangan}
-          onChange={(e) => setValueKeterangan(e.target.value)}
-          // onChange={(e) => store.updateNewEmail(e.target.value)}
-          type="text"
-          placeholder="Keterangan"
-          className="input input-xs h-11 input-bordered lg:w-full w-full"
-        />
+        <div className="w-full flex flex-col gap-2">
+          <input
+            value={valueKeterangan}
+            onChange={(e) => setValueKeterangan(e.target.value)}
+            type="text"
+            placeholder="Keterangan"
+            className="input input-xs h-11 input-bordered lg:w-full w-full"
+          />
+          {errors?.valueKeterangan && (
+            <p className="px-2 text-red-500 text-xs">
+              {errors?.valueKeterangan}
+            </p>
+          )}
+        </div>
         <button
           onClick={handleAdd}
-          to="/dashboard/ruas-jalan"
+          to="/ruas-jalan"
           className="w-full btn btn-xs p-5 btn-primary flex flex-col items-center"
         >
           Simpan

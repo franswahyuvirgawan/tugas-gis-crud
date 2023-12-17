@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import useUserStore from "../store/userStore";
+import { PuffLoader } from "react-spinners";
 
 function JenisJalan() {
   const store = useUserStore();
+  const [loading, setLoading] = useState(true);
   const [dataAllJenisJalan, setDataAllJenisJalan] = useState(null);
 
   const fetchDataJenisJalan = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         "https://gisapis.manpits.xyz/api/mjenisjalan",
@@ -17,6 +20,7 @@ function JenisJalan() {
         }
       );
       setDataAllJenisJalan(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -39,18 +43,29 @@ function JenisJalan() {
               {/* head */}
               <thead>
                 <tr>
-                  <th>Id</th>
-                  <th>Jenis Jalan</th>
+                  <th className="text-center">Id</th>
+                  <th className="text-center">Jenis Jalan</th>
                 </tr>
               </thead>
               <tbody>
-                {/* row 1 */}
-                {dataAllJenisJalan?.eksisting.map((item) => (
+                {loading ? (
                   <tr>
-                    <th>{item.id}</th>
-                    <td>{item.jenisjalan}</td>
+                    <td colSpan={2}>
+                      <div className="w-full flex flex-row justify-center py-20">
+                        <PuffLoader color="#fff" />
+                      </div>
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  <>
+                    {dataAllJenisJalan?.eksisting.map((item) => (
+                      <tr>
+                        <th className="text-center">{item.id}</th>
+                        <td className="text-center">{item.jenisjalan}</td>
+                      </tr>
+                    ))}
+                  </>
+                )}
               </tbody>
             </table>
           </div>
