@@ -1,4 +1,3 @@
-"use client";
 import useUserStore from "../store/userStore";
 import { useEffect, useState } from "react";
 import { PuffLoader } from "react-spinners";

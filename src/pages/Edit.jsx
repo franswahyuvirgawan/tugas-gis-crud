@@ -178,8 +178,6 @@ const Edit = () => {
     setEditedData(encodedPath);
   };
 
-  console.log(editedData);
-
   const calculateDistance = (coord1, coord2) => {
     const start = { latitude: coord1[0], longitude: coord1[1] };
     const end = { latitude: coord2[0], longitude: coord2[1] };
